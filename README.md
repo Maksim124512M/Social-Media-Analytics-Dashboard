@@ -18,8 +18,8 @@ This Streamlit dashboard visualizes insights from a YouTube Trending Videos data
 1. Clone the repository:
 
 ```bash
-git clone <your-repo-url>
-cd <your-repo-folder>
+git clone https://github.com/Maksim124512M/Social-Media-Analytics-Dashboard.git
+cd Social-Media-Analytics-Dashboard
 ```
 
 2. Install the required dependencies:
