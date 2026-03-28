@@ -11,5 +11,3 @@ print(f'Dataframe description: {df.describe()}')
 # Dublicates and NaN's
 print(f'NaN values in dataframe: \n {df.isna().sum()}')
 print(f'Duplicates in dataframe: \n {df.duplicated().sum()}')
-
-print(df[df['likes'] >= 57527])

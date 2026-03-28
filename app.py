@@ -6,7 +6,7 @@ from plotly.subplots import make_subplots
 @st.cache_data
 def load_dataframe():
     df = pd.read_csv('data/youtube.csv')
-    df = df.drop_duplicates()
+    df = df.drop_duplicates(['title'])
 
     return df
 
@@ -27,7 +27,45 @@ filtered_data = df[df['title'] == video]
 
 st.metric('Likes of video', int(filtered_data['likes'].iloc[0]))
 
-df['publish_date'] = pd.to_datetime(df['publish_date'])
+df['publish_date'] = pd.to_datetime(df['publish_date'], dayfirst=True)
+df['publish_month'] = df['publish_date'].dt.month
+df['publish_year'] = df['publish_date'].dt.year
 
-# df_grouped_by_publish_date = df.groupby(df['publish_date'].dt.date)['likes'].sum()
+monthly_likes = df.groupby('publish_month')['likes'].sum()
+yearly_likes = df.groupby('publish_year')['likes'].sum()
 
+top_five_videos_by_likes = df.sort_values(by='likes', ascending=False)[:5]
+
+figure = make_subplots(
+    rows=3, cols=1,
+    subplot_titles=('Likes by month', 'Likes by year', 'TOP-5 videos by likes'),
+    row_heights=[0.5, 0.25, 0.25]
+)
+
+figure.add_trace(go.Scatter(
+    x=monthly_likes.index,
+    y=monthly_likes.values,
+    mode='lines+markers',
+    name='Likes by month',
+), row=1, col=1)
+
+figure.add_trace(go.Bar(
+    x=yearly_likes.index,
+    y=yearly_likes.values,
+    name='Likes by year',
+), row=2, col=1)
+figure.update_yaxes(type='log')
+
+figure.add_trace(go.Bar(
+    x=top_five_videos_by_likes['video_id'],
+    y=top_five_videos_by_likes['likes'],
+    name='Likes',
+), row=3, col=1)
+
+figure.update_layout(
+    title='YouTube Trending Videos Dataset Analytics',
+    template='plotly_dark',
+    height=900,
+)
+
+st.plotly_chart(figure)
